@@ -1,6 +1,6 @@
 ---
 title: "Proyecto Gestión Financiera"
-author: "Julio Tejero"
+author: "Pedro Urzua Torm"
 format: html
 editor: visual
 bibliography: references.bib
@@ -23,213 +23,190 @@ library(tidyquant)
 
 Fecha de entrega límite: Miércoles 25 de Septiembre 23:59.
 
-### Definición
+# **Sector**
 
-El activo elegido fue Enel Chile S.A. La compañía es una extensión de Enel, empresa italiana. Se dedica a generación, distribución y transformación de energía a lo largo de todo el país.
+En este informe se analizará Amazon, una de las empresas líderes del sector de comercio electrónico y tecnología en el mundo. Fundada en 1994 por Jeff Bezos, Amazon comenzó como una librería en línea, pero ha evolucionado durante los años donde logro abarcar una amplia gama de productos y servicios, desde comercio electrónico, computación en la nube, servicios de transmisión digital, hasta inteligencia artificial y logística.
 
-Enel Chile se formó a partir de una reestructuración que comenzó en el año 2015, en ese entonces la empresa se llamaba Enersis Américas. En esta reestructuración, se aprobó la fusión de las compañías Enersis Chile, Endesa Chile y Chilectra en una estrategia denominada "La Fusión". En este mismo proceso se procedió al cambio de nombre a la hoy conocida Enel Chile S.A.
+El sector principal en el que opera Amazon es el comercio electrónico, pero también está profundamente integrado en otros sectores clave, como el de la tecnología con Amazon Web Services (AWS) y el entretenimiento digital en Amazon Prime Video y Music. Este sector, según diversos estudios, se caracteriza por un crecimiento constante impulsado por la globalización, el aumento del acceso a internet y las mejoras en las infraestructuras tecnológicas (Hagberg, Sundstrom, & Egels-Zandén, 2016).
 
-Enel Chile es la mayor suministradora de energía del país, debido a esto en relevante exponer los datos nacionales de uso de electricidad. En el paper "Consumption-based carbon emissions, renewable energy consumption, financial development and economic growth in Chile" de @kirikkaleli2021 se expone un análisis descriptivo de los consumos nacionales de electricidad, el cual se presenta a continuación:
+Además, Amazon es un actor clave en la revolución digital en el comercio. Investigaciones como la de Brynjolfsson, Hu y Rahman (2013) destacan cómo empresas como Amazon han transformado la venta minorista, ofreciendo una experiencia de compra optimizada y personalizada, facilitada por el uso de datos y algoritmos avanzados de recomendación. 
 
-[![Tabla 2 en](Data/Screenshot%202023-09-28%20at%2015.51.18.png){fig-align="center"}](https://doi.org/10.1002/bse.2945)
+Amazon tambien tiene un impacto gigantesco en el sector tecnológico. A través de Amazon Web Services (AWS), la empresa ha consolidado su posición como líder en el sector de la computación en la nube, una industria que ha revolucionado cómo las empresas gestionan sus datos y servicios (Mell & Grance, 2011).
 
-En donde:
+# **Motivacion**
 
--   CCO2: Emisiones de carbonos basadas en el consumo de energía medida en millones de toneladas de CO2.
+La eleccion de estudiar el sector de comercio electrónico y tecnología, tomando como principal variable a Amazon, es debido a su papel esencial en la transformación de la economía digital global. Esta, al ser un líder en estos sectores, ha revolucionado no solo la manera en que las personas compran, sino que también cómo las empresas gestionan sus operaciones logísticas y tecnológicas. Amazon ofrece un analisis completo para entender las dinámicas del comercio en línea y la computación en la nube.
 
--   GDP: Crecimiento de la economía medido en el PIB per cápita.
+A nivel global, el sector de comercio electrónico ha experimentado un crecimientogigantesco en los ultimos años. Este sector ha cambiado las formas tradicionales de consumo y ha permitido a las empresas expandir sus mercados más allá de sus fronteras físicas. Adicionalmente, el impacto de Amazon en la computación en la nube a través de Amazon Web Services (AWS) es notable, ya que ha transformado cómo las empresas manejan sus datos y servicios tecnológicos.
 
--   ELE: Consumo eléctrico medido en Kw/h.
+El análisis de Amazon permitirá aplicar los modelos teóricos y conocimientos adquiridos en clase en un entorno práctico y real, aportando una comprensión más profunda sobre cómo una empresa tan influyente puede impactar en varios sectores de la economía mundial.
 
--   REN: COnsumo de energía renovables medido en Tw/h.
+\
 
--   FD: Crecimiento financiero, medida amplia para el desarrollo financiero teniendo en cuenta su eficiencia, accesibilidad y profundidad.
+# **Contexto**
 
-```{r ETL}
-#| echo: false
-# Alternativamente Use FANG data set
-# data("FANG") 
-end <- as_date("2022-12-31")
-# Get AAPL and AMZN Stock Prices
-# AAPL <- tq_get("AAPL", get = "stock.prices", from = "2015-09-01", to = end)
-# AMZN <- tq_get("AMZN", get = "stock.prices", from = "2000-01-01", to = end)
-ENELCHILE <- tq_get("ENELCHILE.SN", get = "stock.prices", from = "2017-01-01", to = end)
-ENELAM <- tq_get("ENELAM.SN", get = "stock.prices", from = "2017-01-01", to = end)
-AESANDES <- tq_get("AESANDES.SN", get = "stock.prices", from = "2017-01-01", to = end)
-ECL <- tq_get("ECL.SN", get = "stock.prices", from = "2017-01-01", to = end)
-CL <- rbind(ENELCHILE,ENELAM,AESANDES,ECL)
-```
+\
 
-Por otro lado, también es de suma importancia tener en consideración los precios históricos del activo ENELCHILE, el cual actualmente tiene un valor promedio para el intervalo de años 2017-presente igual a `r round(mean(ENELCHILE$close),digits=0)`. A continuación se presentan dos gráficos que muestran estos datos históricos:
+Para evaluar y entender el sector escogido, se usaron tres variables que están directamente relacionadas con este y con la compañia seleccionada. El precio de las acciones y el volumen de negociación permiten medir el impacto del rendimiento de Amazon en los mercados financieros, mientras que la volatilidad refleja la percepción de riesgo e incertidumbre en relación con los movimientos del mercado. Estos datos son esenciales para evaluar cómo los inversionistas valoran el crecimiento de la compañia.
 
-```{r ENELCHILEline}
-#| echo: false
-ENELCHILE %>%
-    ggplot(aes(x = date, y = close)) +
-    geom_line() +
-    labs(title = "ENELCHILE Line Chart", y = "Closing Price", x = "") + 
-    theme_tq() +
-  geom_hline(yintercept=mean(ENELCHILE$close), linetype="dashed", color = "red")
-```
+\
 
-```{r ENELCHILEcandle}
-#| warning: false
-ENELCHILE %>%
-    ggplot(aes(x = date, y = close)) +
-    geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
-    labs(title = "ENELCHILE Candlestick Chart", y = "Closing Price", x = "") +
-    theme_tq()
-```
+**Precio de las acciones (AMZN)**
 
-### Motivación
+**\
+**El precio de las acciones de Amazon es un indicador directo del valor de mercado que los inversionistas otorgan a la empresa. Históricamente, Amazon ha mostrado un crecimiento sostenido en su cotización, con aumentos significativos impulsados por el crecimiento de sus líneas de negocio principales, como el comercio electrónico y Amazon Web Services (AWS). Según Yahoo Finance, las acciones de Amazon han experimentado subidas notables, especialmente durante eventos macroeconómicos o el lanzamiento de nuevos productos y servicios. El análisis del precio de las acciones permite evaluar la percepción de valor por parte del mercado y la confianza de los inversionistas en la estrategia a largo plazo de la empresa.
 
-Se escogió este activo en particular debido al compromiso con el medio ambiente y a indicadores ASG (Ambiental, Social y Gobernanza), alguno de sus objetivos son:
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXfWQrMNvg2mBWVH23TX7ECEIxooJiiy7Es6uPKqFZtb-JBBGVCGGxZHHQJSOqOcTBBQ7qoZFpErUnrt0ZUVRj_KUDYEqhrHm7ojY-EGalf0Ug6wcNZ34wD8lkt6CmBd031CJkf7QSrajkP9SyPkKOXfSsaF?key=FYn_OEKERpm4myuGvzRW9g)Grafico 1: Precio de las acciones de Amazon
 
-Alcanzar un 80% de energía renovable en su matriz de generación para 2024, reducir las emisiones de gases de efecto invernadero en un 40% para 2025 y aumentar la eficiencia energética en un 20% para 2030.
+Fuente: Elaboración propia
 
-Como menciona el Diario Financiero (DF) Enel Chile sostiene una estrategia de sostenibilidad para llegar a ser una empresa carbono neutral al año 2040. Para lograr este objetivo, Enel destinará US\$1.700 millones a temas ASG, los que principalmente se gastarán en la construcción de nuevas plantas de energías renovables.
+\
+\
 
-Asimismo, varios documentos de la WOS (Web of Science) sustentan la iniciativa medioambiental de Enel Chile, principalmente con tarifas variables que logren cambiar los hábitos de uso de energía, homeostaticidad energética, entre otros.
+**Volatilidad**
 
-Todos estos puntos fomentan el interés especifico sobre este activo por sobre los demás activos energéticos incluidos en el IPSA.
+**\
+**La volatilidad es una medida de las fluctuaciones en el precio de las acciones y es particularmente relevante en el caso de empresas tecnológicas como Amazon, que tienden a tener una volatilidad mayor debido a su exposición a cambios rápidos en el mercado tecnológico y digital. La volatilidad se puede calcular a través de métricas como la desviación estándar del precio de las acciones a lo largo de un periodo determinado, en este caso 30 dias. Según estudios de finanzas (Hull, 2018), la alta volatilidad puede implicar un mayor riesgo, pero también mayores oportunidades de retorno. Para Amazon, la volatilidad está ligada a eventos como lanzamientos de nuevos productos, cambios regulatorios o informes de ganancias.
 
-### Contexto
+\
 
-El IPSA tiene 4 componentes de la industria de energía, Enel Chile S.A, Enel Latinoamerica S.A, Engie Energia Chile S.A y AES Gener SA. Los primeros 2 corresponden a la empresa italiana Enel. A continuación se presentan los precios históricos de cada una de estas acciones:
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdCHpgVlh91MhEyPvvS4qHzelCEAzCvsnU5NJumvyAd4S6x-ZhrZjfkkMZlRVN6lwh1RKT_QN6I7wtFLy1S8NlmkhQhVVSEZ7SMXGX1qfdBTkjMWdcVIorFLN8Hilxu2k5Jg1ECbJQYH4fzD_5nuhnnhCoz?key=FYn_OEKERpm4myuGvzRW9g)Grafico 2: Volatilidad de las acciones de Amazon
 
-```{r context}
-#| warning: false
-#| echo: false
-start <- end - weeks(6)
+Fuente: Elaboración propia
 
-CL %>%
-    filter(date >= start - days(2 * 15)) %>%
-    ggplot(aes(x = date, y = close, group = symbol)) +
-    geom_line() +
-    labs(title = "Activos Energía IPSA", 
-         subtitle = "Comparativo de activos del sector",
-         y = "Precio al cierrew", x = "") + 
-    coord_x_date(xlim = c(start, end)) +
-    facet_wrap(~ symbol, ncol = 2, scale = "free_y") +
-    theme_tq()
-```
+**Volumen de las acciones**
 
-Si bien los montos de los precios dependen de otros factores, tales como la cantidad de acciones que componen la compañía, si se observan tendencias entre estas. La más clara es que ambas empresas de Enel siguen un mismo patrón de precios, lo que hace sentido ya que pertenecen al mismo grupo. Lo que también se aprecia, es que cuando el precio de Enel aumenta, tanto de Engie Energia Chile S.A como el de AES Gener SA disminuye. Esto se puede deber a que la variación en la participación que tiene en la industria cada uno de estas influye inversamente en la otra (a mayor participación de Enel Chile, menor será la de el resto de los suministradores nacionales).
+**\
+**El volumen de acciones negociadas es una variable crucial que refleja el interés de los inversionistas en el activo. El volumen se refiere a la cantidad de acciones que se compran o venden durante un periodo determinado, y es un indicador de la liquidez del activo en el mercado. Un alto volumen puede indicar que hay un gran interés en las acciones de Amazon, ya sea por razones de inversión o especulación. Según lo investigado, el volumen de las acciones de Amazon tiende a aumentar significativamente en momentos clave, como la publicación de resultados financieros trimestrales o cambios importantes en la dirección de la empresa. Un mayor volumen también puede correlacionarse con movimientos más grandes en el precio de las acciones.
 
-También es interesante ver las rentabilidades que ha tenido el activo elegido:
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXckE6ZZxO7GaB918KHlINvOsvu_zZ5lW4x_syhGHygYLNP34nvVy8jI0rjvrEb33y3yR9LOq0a0AqRUmYTvTcqvnRJQZ7Ew6Y23FleTj2HNp2PUlXcRGug99FPx3Ecz05hl2NIa67sceVL7GPusCegeFtP2?key=FYn_OEKERpm4myuGvzRW9g)
 
-![](Data/Screenshot%202023-09-28%20at%2017.57.54.png){fig-align="center" width="144"}
+Grafico 3: Volumen de las acciones de Amazon
 
-A partir de esto se puede ver que Enel Chile ha tenido un crecimiento en la mayoría de los años, aunque se puede apreciar una baja de casi un 50% en el año 2021 debido a la pandemia de Covid-19. Cabe destacar que según analistas de Yahoo Finance, Enel Chile tendrá un crecimiento estimado cercano al 65,80%.
+Fuente: Elaboración propia
 
-### Modelo Binomial
+# **Derivado** 
 
-El Modelo Binomial de Valoración de Opciones (BM, por sus siglas en inglés) también conocido como Cox-Ross-Rubinstein introducido en @cox1979, es un modelo que estima el valor de una opción en t=0 teniendo pagos futuros en diferentes estados (usualmente "Up" y "Down"). Este Modelo Binomial asume que no hay posibilidad de arbitraje en el mercado, determinando el precio que sigue un activo en un random walk, en donde en cada paso (tiempo) existe una probabilidad de que el precio suba o baje (Ahmad, 2018).
+Para poder realizar un análisis sobre el modelo Binomial y Black-Scholes es importante definir los siguientes parametros: 
 
-![Random Walk en BM de un paso (Ahmad, 2018)](Data/Screenshot%202023-10-19%20at%2010.33.38.png){fig-align="center"}
+-   Precio de la opción (Q3):  4.0600
 
-Para calcular la valoración de la opción con el Modelo Binomial, es necesario definir $S_0$, que corresponde al precio actual del activo. Además, se deben determinar los valores de $u$ y $d$, que representan los factores por los cuales se multiplica $S_0$ en cada estado para obtener el precio del activo en cada caso en el siguiente período (t = 1):
+-   Precio del Ejercicio (K) : 187.500
 
-$$
-S_1 = \begin{cases}    S_0\cdot u \text{ en el estado ``Up"} \\    
-S_0\cdot d \text{ en el estado ``Down"}\end{cases}
-$$
+-   Precio del Bono (B) : 100.8594
 
-También se debe calcular la probabilidad $P$ de que ocurra el caso "Up", la probabilidad de que ocurra el otro caso ("Down") simplemete quedaría en $(1-P)$. Para el calculo de la porobabilidad se usa la siguiente ecuación:
+-   Precio del Bono (B) : 100.8594
 
-$$
-P = \frac{e^r-d}{u-d}
-$$
+-   Rendimiento del bono (r) : 3.431%
 
-Donde $r$ es la tasa libre de riesgo.
+-   Day´s Range: 3.5
 
-Por otro lado se deben calcular $C_u$ y $C_d$ los cuales se obtienen como los precios de una opción europea:
+-   Precio del activo Subyacente (S0): 193.28
 
-$$
-C_u = max(0, S_0\cdot u-k)\\
-C_d = max(0, S_0\cdot d-k)
-$$
+-   Precio del activo Estado u :\$ 196.78
 
-Finalmente el precio de la opción se calcula de la siguiente manera:
+-   Precio del activo Estado d :\$ 189.78
 
-$$
-V = \frac{C_u\cdot P + C_d\cdot (1-P)}{1+r}
-$$
+que se obtuvieron de las siguientes imagenes:
 
-```{r}
-binomial_model <- function(cu, p, cd, rf) {
-  return((cu*p + cd*(1-p))/(1+rf))
-} 
+\
+\
 
-S <- tail(ENELCHILE$close,1)  # Precio actual del activo subyacente
-K <- 38  # Precio de ejercicio de la opción
-T <- 1  # Tiempo hasta la expiración (en años)
-r <- 0.0642 # Tasa de interés libre de riesgo
-u <- 1.1  # Factor de crecimiento en un paso hacia arriba
-d <- 0.9  # Factor de crecimiento en un paso hacia abajo
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXflJKVLWeniV00btvYg0ujHvdHR09XdhJlN352s75vEX-AaqMVzcjTyYIrYDuKEVoHNeQ4q2br5I-zsydrlT5J0K8Jhy6ERP25QaC1xcaQarxwWb4QmKBCCd_qjfM7gzO_K9u5DEmoAN66lCzPBqfzxraQv?key=FYn_OEKERpm4myuGvzRW9g)
 
-Su <- S*u
-Sd <- S*d
-p <- (1+r-d)/((1+r)*(u-d))
+Imagen 1: AMZN240920C00187500
 
-cu <- max(Su - K, 0)
-cd <- max(Sd - K, 0)
+Fuente: Yahoo Finance![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXe4YpPBx6rwD5DKESWoUxbU9zsC8hU_qWcl-JpzBllzcMC-k5uSGa5bESbcA01DY9CrHJQ_iJ6DfQeP7a6B1DfqZ2W1pbphzD79_t2F8daCBH2Zro8IIfLa_SFM3LhAvEx-u3kLDZoBuhjocNIv6sHqfR-3?key=FYn_OEKERpm4myuGvzRW9g)
 
+Imagen 2: AMZN
 
-print(paste("El precio de la opción con el Modelo Binomial es ", binomial_model(cu, p, cd, r)))
+Fuente: Yahoo Finance
 
-```
+A partir de eso se calcularon los valores de d y u respectivamente:
 
-### Modelo Black and Scholes (BS)
+● Factor de disminución (d):	0.9818			
 
-```{r}
-black_scholes <- function(S, K, t, r, sigma) {
-    d1 <- (log(S/K) + (r + 0.5 * sigma^2) * t) / (sigma * sqrt(t))
-    d2 <- d1 - sigma * sqrt(t)
-    N_d1 <- pnorm(d1)
-    N_d2 <- pnorm(d2)
-    precio_call <- S * N_d1 - K * exp(-r * t) * N_d2
-    return(precio_call)
-  }
-  
-rendimientos <- diff(log(ENELCHILE$close))
-sigma<-sd(rendimientos[2:length(rendimientos)])
-volatilidad<-var(rendimientos[2:length(rendimientos)])
+● Factor de aumento (u): 1.0181
 
+Con los datos ya en mano se ejecuto el siguiente codigo para obtener la matriz W de valores:  ![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXfzJTTsGvYeiqLsBD0zkZadzEjscqiHcjUwu4vCNmtxmwUMLt-3ClilT6b81QJ3A7sTaiEFB9K-EayQxi7m7a6flDEBp7WoWhYmdqLGRglGvMjiV43OLi-pTZH05c8xBKhOBFfEDzE6IX6Cm46G_s77Xkw?key=FYn_OEKERpm4myuGvzRW9g)
 
-S<- tail(ENELCHILE$close,1) # Precio actual del activo subyacente
-K<- 38 # Precio de ejercicio de la opción
-R<- 0.0642 # Tasa de interés libre de riesgo
-t <- 1 # Tiempo hasta la expiración (en años)
+Imágen 3: Código 
 
-print(paste("El precio de la opción con el Modelo Black and Scholes es ", black_scholes(S, K, t, R, sigma)))
+Fuente: Material entregado en clases
 
+Al analizar la matriz W, se puede observar que consta de tres filas, cada una representando diferentes escenarios para el bono, el activo subyacente (acción) y la opción.
 
-```
+Los primeros valores de la matriz W representan lo siguiente: 
 
-### Comparación de modelos
+-   **Bono:** El valor inicial del bono es −100.8594 USD, lo que sugiere una posición corta en el bono (se ha vendido el bono y se debe esta cantidad).
 
-Ambos modelos son comúnmente utilizados en las finanzas. Por lo tanto, se puede afirmar que cuentan con respaldo y fundamentos sólidos. Según el artículo de (Ahmad, 2018), los resultados del precio de la opción calculados con ambos modelos muestran una correlación muy cercana a 1, lo que significa que si el precio de la opción aumenta con un modelo, también lo hace con el otro. Sin embargo, esto no implica que ambos modelos proporcionen el mismo precio, como se puede observar en el ejercicio realizado anteriormente.
+-   **Acción:** El precio inicial de la acción es −193.28 USD, lo que también representa una posición corta en la acción.
 
-Estos modelos difieren en algunas cosas, tales como:
+-   **Opción:** El valor inicial de la opción es −4.06 USD, lo que indica que se ha pagado una prima por adquirir la opción.
 
--   Precio del activo subyacente: En modelo Black and Scholes sigue una distribución lognormal mientras que el Binomial multiplica el valos $S_0$ con dos opciones ($u$ y $d$)
+El precio de alza, la acción ha aumentado lo cual afecta los valores de los tres instrumentos:
 
--   Debido a lo anterior, el modelo de Black and Scholes es continuo y el Binomial discreto.
+-   **Bono:** El valor del bono es 104.3199 USD, que ha crecido debido a la tasa de interés libre de riesgo (r = 1.03431).
 
--   El modelo BS sirve solo para opciones europeas, mientras que el Binomial también sirve para opciones americanas.
+-   **Acción:** El precio de la acción sube a 196.7784 USD, debido a un incremento basado en el factor de alza (u = 1.0181).
 
-También tienen algunas similitudes:
+-   **Opción:** El valor de la opción en este escenario es 9.2784 USD, ya que el precio de la acción ha superado el precio de ejercicio (K = 187.50USD). La opción está "in-the-money", y tiene un valor significativo.
 
--   Ambos utilizan el precio actual del activo subyacente.
+En el escenario de baja, se genera los siguientes valores:
 
--   Ambos usan la tasa libre de riesgo.
+-   **Bono:** El valor del bono se mantiene en 104.3199 USD, ya que el bono no depende del comportamiento del mercado accionario.
 
--   En este caso los dos se usaron para un periodo de tiempo.
+-   **Acción:** El precio de la acción cae a 189.7623 USD, lo que refleja el impacto del factor de baja (d = 0.9818).
 
--   Ambos consideran la volatilidad del activo.
+-   **Opción:** El valor de la opción en este escenario es 2.2623 USD. Aunque ha disminuido con respecto al escenario de alza, la opción sigue estando "in-the-money" porque el precio de la acción sigue por encima del precio de ejercicio.
 
-En resumen, el modelo de Black-Scholes constituye una buena herramienta analítica para valorar opciones europeas y supone movimientos continuos en las cotizaciones del mercado. En cambio, el modelo Binomial ofrece mayor flexibilidad al emplear una estructura de árbol que facilita la valoración tanto de opciones europeas como americanas. Elegir uno u otro modelo dependerá del tipo específico de opción que se esté analizando y las inferencias que se quieran hacer en relación a cómo evolucionarán los precios en el mercado financiero.
+A partir de los resultados obtenidos, se corrio el siguiente codigo para determinar el valor de la opcion:![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXegqoP1jZ-J4iWwx1TPDpDoymIpPUZm0MXw9CvzXRKYHvMMJoqqdI72Ve_WQAHu4uK0lKxqBVRA5s-sd2OD3BB8BXWtFpbI6UM1ETwYAYA2m9u5_2674kZU688qrmuWF0fGXzwK2ZyMur8CFIEsd8ZpBymS?key=FYn_OEKERpm4myuGvzRW9g)
+
+Imágen 4: Código 
+
+Fuente: Material entregado en clases
+
+El valor de la opción call calculado es de \$5.80 USD. Esto significa que, dada la estructura del modelo binomial, el precio actual de la acción, el precio de ejercicio de K=187.5 USD, las probabilidades ajustadas al riesgo, y la tasa de interés libre de riesgo, el valor teórico de esta opción es 5.80 USD.
+
+Este valor es la prima que el comprador de la opción debe pagar para adquirir el derecho (pero no la obligación) de comprar la acción de Amazon a 187.5 USD antes de la fecha de expiración. El valor está basado en la expectativa de que el precio de la acción suba lo suficiente como para que la opción termine "in-the-money" y tenga valor intrínseco positivo.
+
+Análisis del Modelo Black-Scholes:
+
+El modelo de Black-Scholes es una fórmula matemática utilizada para calcular el precio teórico de una opción europea, ya sea de compra (call) o venta (put). El modelo asume un mercado eficiente en el que los precios siguen un movimiento browniano geométrico, y se basa en ciertos parámetros clave:
+
+-   S0: El precio actual del activo subyacente, que en este caso es 193.28193.28193.28 USD (Amazon).
+
+-   K: El precio de ejercicio de la opción, 187.50 USD.
+
+-   r: La tasa libre de riesgo anual, en este caso 0.03431 o 3.431%.
+
+-   T: El tiempo hasta el vencimiento en años. En este ejemplo, es 0.0027 años (aproximadamente un día de vencimiento restante).
+
+-   Volatilidad: Aproximada usando el Day’s Range de 3.5 USD, dividido entre el precio del activo y ajustado por la raíz cuadrada de los días de trading en un año (252).
+
+Se toman los datos y se corre el siguiente codigo del modelo Black-Scholes:![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdbK1wvOqUHtYJtzMR34qmnqKwCuC-3mMpL2_7-uZ5tpN5DJIG7D12YLIcD4ilICMQsq3Gp9zo3QXnquQrUOoEuiPQUrpfkdn2P3t5xSpuSB54uHjF20AUH_BBV8lNRhGxdVzKvuuV-v72W7Ah8Aht1O2Ag?key=FYn_OEKERpm4myuGvzRW9g)
+
+Imágen 5: Código 
+
+Fuente: Material entregado en clases
+
+El precio de la opción call calculado con este modelo es de \$5.7974 USD, lo que refleja el valor teórico de la opción, dado que la volatilidad implícita y otros parámetros asumidos están alineados con el comportamiento del mercado. El modelo Black-Scholes tiene como ventajas su simplicidad y rapidez en el cálculo, ya que no requiere simulación de escenarios de precios futuros. Sin embargo, está basado en varios supuestos que pueden no reflejar completamente la realidad del mercado. 
+
+El modelo binomial discretiza el tiempo hasta el vencimiento en varios periodos, permitiendo simular cómo el precio de un activo puede subir o bajar en cada paso. Este enfoque pondera los resultados utilizando probabilidades ajustadas al riesgo, y es flexible para incorporar cambios como dividendos o variaciones en la volatilidad. Por otro lado, el modelo Black-Scholes es una fórmula analítica continua que no requiere simulaciones, basándose en ecuaciones diferenciales que asumen un movimiento constante en el precio del activo. A diferencia del binomial, este modelo es menos adaptable a eventos discretos, como saltos en el precio o el pago de dividendos.
+
+En términos de cálculo, el modelo binomial utiliza probabilidades ajustadas para simular los posibles cambios del activo en escenarios de alza y baja. En un cálculo anterior, el valor de la opción obtenido fue de \$5.80 USD. En contraste, el modelo Black-Scholes, que no usa simulaciones, se basa en términos matemáticos como d1d_1d1​ y d2d_2d2​ para determinar la probabilidad de que una opción termine "in-the-money". El precio calculado fue \$5.7974 USD, muy cercano al resultado del binomial. El binomial es útil para opciones americanas, mientras que el Black-Scholes es común en opciones europeas debido a su simplicidad y rapidez en los cálculos.
+
+Ambos modelos son útiles y proporcionan valores teóricos similares en este caso. Sin embargo, el modelo binomial ofrece mayor flexibilidad para incorporar eventos y escenarios más realistas, mientras que el modelo Black-Scholes es más eficiente para cálculos rápidos y supone mercados más ideales.
+
+**Conclusiones:**
+
+En cuanto a la opción call de Amazon analizada, se utilizó un modelo binomial para evaluar los posibles escenarios de precio del activo subyacente, llegando a un valor teórico de \$5.80 USD para la opción. Este resultado se basó en las fluctuaciones proyectadas del precio de la acción, que en su escenario de alza alcanzó los \$196.78 USD, y en el escenario de baja, cayó a \$189.78 USD. El valor intrínseco de la opción fue de \$9.28 USD en el escenario de alza, lo que demuestra que la opción estaba "in-the-money" en dicho escenario.
+
+El modelo binomial permitió capturar las posibles variaciones en el precio de la acción y cómo estas afectan el valor de la opción. En el escenario de alza, se obtuvo un valor positivo para la opción, mientras que en el escenario de baja, aunque el valor disminuyó, la opción seguía siendo rentable para el comprador. Esto resalta la importancia de analizar las opciones no solo en términos de su valor intrínseco, sino también considerando el contexto del mercado y la volatilidad asociada al activo subyacente.
+
+Por otro lado, el modelo Black-Scholes también fue utilizado para calcular el precio de la opción, obteniendo un valor de \$5.7974 USD, lo que refleja una alta coherencia con el valor obtenido por el modelo binomial. Este resultado refuerza la robustez del análisis y destaca que ambos modelos ofrecen resultados similares bajo las condiciones actuales del mercado. Sin embargo, el modelo Black-Scholes, al ser más sencillo y eficiente en su cálculo, presenta ciertas limitaciones al no considerar posibles eventos futuros discretos, como el pago de dividendos o cambios abruptos en el precio.
+
+Finalmente, la comparación entre los resultados obtenidos con ambos modelos revela que, si bien ofrecen valores teóricos muy próximos, el modelo binomial proporciona una mayor flexibilidad al incorporar escenarios más detallados, mientras que el modelo Black-Scholes es más apropiado para estimaciones rápidas. Ambos enfoques resultan útiles para entender el comportamiento de las opciones en el mercado y para tomar decisiones de inversión informadas. El análisis de Amazon y de su opción call subraya cómo las variaciones en el precio del activo subyacente y la volatilidad del mercado impactan directamente en el valor de las opciones, ofreciendo así una valiosa herramienta para evaluar las oportunidades de inversión.
 
 # Hito 2 (en revisión):
 
